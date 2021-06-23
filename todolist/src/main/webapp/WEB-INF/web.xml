@@ -9,6 +9,7 @@
 	<url-pattern>/auth</url-pattern>
 </servlet-mapping>
 
+
 <servlet>
 	<servlet-name>Login</servlet-name>
 	<servlet-class>com.example.servlet.LoginController</servlet-class>
@@ -26,5 +27,15 @@
 <servlet-mapping>
 	<servlet-name>tasks</servlet-name>
 	<url-pattern>/tasks</url-pattern>
+</servlet-mapping>
+
+
+<servlet>
+	<servlet-name>updateprofile</servlet-name>
+	<servlet-class>com.example.servlet.UpdateProfileController</servlet-class>
+</servlet>
+<servlet-mapping>
+	<servlet-name>updateprofile</servlet-name>
+	<url-pattern>/update</url-pattern>
 </servlet-mapping>
 </web-app>

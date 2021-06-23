@@ -45,16 +45,26 @@ public class SignupController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		register(request);
+		opensession(request);
+        response.sendRedirect("tasks");
+
+	}
+	public void register(HttpServletRequest request) {
 		User utilisateur = new User();
         utilisateur.setName(request.getParameter("name"));
         utilisateur.setEmail(request.getParameter("email"));
         utilisateur.setPassword(request.getParameter("pass"));
         userdao.adduser(utilisateur);
-        HttpSession session=request.getSession();
-    	session.setAttribute("email", request.getParameter("email"));
-    	session.setAttribute("password", request.getParameter("pass"));
-
-		this.getServletContext().getRequestDispatcher("/WEB-INF/tasks.jsp").forward(request, response);
-
 	}
+	public void opensession(HttpServletRequest request) {
+		String email=request.getParameter("email");
+		User user =userdao.selectuserbyemail(email);
+    	HttpSession session=request.getSession();
+		session.setAttribute("id", user.getId());
+		session.setAttribute("name", user.getName());
+		session.setAttribute("email", user.getEmail());
+		session.setAttribute("password", user.getPassword());
+	}
+	
 }

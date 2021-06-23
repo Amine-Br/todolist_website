@@ -13,16 +13,12 @@ import com.example.dao.UserDAOimp;
 import com.example.models.User;
 
 /**
- * Servlet implementation class LoginController
+ * Servlet implementation class UpdateProfileController
  */
-@WebServlet("/LoginController")
-public class LoginController extends HttpServlet {
+@WebServlet("/UpdateProfileController")
+public class UpdateProfileController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private UserDAO userdao;   
-   
-	
-	
-	
     @Override
 	public void init() throws ServletException {
 		// TODO Auto-generated method stub
@@ -33,7 +29,7 @@ public class LoginController extends HttpServlet {
 	/**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginController() {
+    public UpdateProfileController() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -43,11 +39,7 @@ public class LoginController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//for logout
-		/*
-    	HttpSession session=request.getSession();
-		session.invalidate();*/
-		this.getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+		this.getServletContext().getRequestDispatcher("/WEB-INF/update_profile.jsp").forward(request, response);
 	}
 
 	/**
@@ -55,24 +47,18 @@ public class LoginController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		User utilisateur = new User();
-        utilisateur.setEmail(request.getParameter("email"));
-        utilisateur.setPassword(request.getParameter("pass"));
-        boolean result=userdao.login(utilisateur);
-        if(result) {
-    		String email=request.getParameter("email");
-    		User user =userdao.selectuserbyemail(email);
-        	HttpSession session=request.getSession();
-    		session.setAttribute("id", user.getId());
-    		session.setAttribute("name", user.getName());
-    		session.setAttribute("email", user.getEmail());
-    		session.setAttribute("password", user.getPassword());        	
-        	request.setAttribute("login_result", "success");
-        }else {
-        	request.setAttribute("login_result", "error");
-        }
-		//this.getServletContext().getRequestDispatcher("/WEB-INF/tasks.jsp").forward(request, response);
-        response.sendRedirect("tasks");
+		HttpSession session = request.getSession();
+		int id=Integer.parseInt(session.getAttribute("id").toString());
+		System.out.println("id="+id);
+		User user=new User();
+		user.setName(request.getParameter("name"));
+		user.setEmail(request.getParameter("email"));
+		user.setPassword(request.getParameter("pass"));
+		userdao.updateuserbyid(user, id);
+		session.setAttribute("name", user.getName());
+		session.setAttribute("email", user.getEmail());
+		session.setAttribute("password", user.getPassword());
+		
 	}
 
 }

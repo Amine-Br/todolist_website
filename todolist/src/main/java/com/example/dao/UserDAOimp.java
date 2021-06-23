@@ -79,7 +79,7 @@ public class UserDAOimp implements UserDAO{
 			preparedStatement.setString(1, user.getEmail());
 			preparedStatement.setString(2, user.getName());
 			preparedStatement.setString(3, user.getPassword());
-			preparedStatement.setInt(4, user.getId());
+			preparedStatement.setInt(4, id);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
         	e.printStackTrace();

@@ -8,7 +8,10 @@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>tasks!</title>
+
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 
 	
@@ -25,44 +28,155 @@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
+    <ul class="navbar-nav ml-auto mr-5">
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown
+          <c:out value="${ sessionScope.name }"></c:out>
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="/todolist/update">Update Profile</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
+			<form action="tasks" method="post">
+				<input type="hidden" name="action" value="logout"/>
+				<input type="submit" class="dropdown-item" name="logout" value="Log out"/>
+    		</form>        
+    	  </div>
       </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
   </div>
 </nav>
 
-		<c:if test="${ !empty sessionScope.email && !empty sessionScope.password }">
-        	<p>Vous êtes ${ sessionScope.email } ${ sessionScope.password } !</p>
-    	</c:if>
-    	<form action="tasks" method="post">
-			<input type="submit" name="logout" value="Log out"/>
-    	</form>
+<div class="my-5 mx-5">
+	<form method="post" action="tasks">
+		<input type="hidden" name="action" value="add"/>
+	  <div class="form-row">
+	    <div class="col-7">
+	      <input type="text" class="form-control" placeholder="Todo item" name="todo">
+	    </div>
+	    <div class="col">
+	      <input type="date" class="form-control" placeholder="date" name="date">
+	    </div>
+	    <div class="col">
+		  <button type="submit" class="btn btn-success"><i class="zmdi zmdi-plus"></i> add</button>    </div>
+	  </div>
+	</form>
+</div>
+
+
+
+
+
+<div class="table-responsive">
+	<table class="table table-bordered">
+	  <thead>
+	    <tr>
+	      <th scope="col">#</th>
+	      <th scope="col">Todo item</th>
+	      <th scope="col">Date</th>
+	      <th scope="col">Status</th>
+	      <th scope="col" colspan="3" class="text-center">Actions</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+		<c:forEach var="task" items="${ tasks }" >
+			<c:if test="${ task.status == 'in progress' }">
+					<tr>
+				      <th scope="row">${ task.id }</th>
+				      <td>${ task.todo }</td>
+				      <td>${ task.task_date }</td>
+				      <td>${ task.status }</td>
+				      <td class="text-center">
+				      	<form action="tasks" method="post">
+				      		<input type="hidden" name="action" value="delete">
+				      		<input type="hidden" name="id" value="${ task.id }">
+				      		<button type="submit" class="btn btn-danger"><i class="zmdi zmdi-delete"></i> remove</button>
+				      	</form>
+				      </td>
+				      <td class="text-center">
+				      		<button type="submit" class="btn btn-info"><i class="zmdi zmdi-edit" data-toggle="modal" data-target="#a${ task.id }"></i> edit</button>
+								<div class="modal fade" id="a${ task.id }" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+								  <div class="modal-dialog modal-dialog-centered" role="document">
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+								        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								          <span aria-hidden="true">&times;</span>
+								        </button>
+								      </div>
+								      <div class="modal-body">
+										<form method="post" action="tasks">
+											<input type="hidden" name="action" value="edit">
+				      						<input type="hidden" name="id" value="${ task.id }">
+										  <div class="form-row">
+										    <div class="col-7">
+										      <input type="text" class="form-control" placeholder="Todo item" name="todo" value="${ task.todo }">
+										    </div>
+										    <div class="col">
+										      <input type="date" class="form-control" placeholder="date" name="date" value="${task.task_date }">
+										    </div>
+										    <div class="col">
+											  <button type="submit" class="btn btn-success"><i class="zmdi zmdi-plus"></i> update</button>    </div>
+										  </div>
+										</form>
+								      </div>
+								      <div class="modal-footer">
+								        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								        <button type="button" class="btn btn-primary">Save changes</button>
+								      </div>
+								    </div>
+								  </div>
+								</div>
+				      </td>
+				      <td class="text-center">
+				      	<form action="tasks" method="post">
+				      		<input type="hidden" name="action" value="complete">
+				      		<input type="hidden" name="id" value="${ task.id }">
+				      		<button type="submit" class="btn btn-success"><i class="zmdi zmdi-check"></i> complete</button>
+				      	</form>
+				      </td>
+				    </tr>
+			    
+			</c:if>
+		  	<c:if test="${ task.status == 'finished' }">
+			  	<tr style="background: #8fd19e;">
+		      		<th scope="row">${ task.id }</th>
+				    <td>${ task.todo }</td>
+				    <td>${ task.task_date }</td>
+				    <td>${ task.status }</td>
+		      		<td class="text-center" colspan="3">
+						<form action="tasks" method="post">
+				      		<input type="hidden" name="action" value="delete">
+				      		<input type="hidden" name="id" value="${ task.id }">
+				      		<button type="submit" class="btn btn-danger"><i class="zmdi zmdi-delete"></i> remove</button>
+				      	</form>		      		
+		      		</td>
+		    	</tr>
+		  	</c:if>
+	  	</c:forEach>
+	    
+
+	  </tbody>
+	</table>
+</div>    	
     	
     <script  src="js/jquery.min.js"></script>	
     <script  src="js/bootstrap.min.js"></script>
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
     	
 </body>
 
